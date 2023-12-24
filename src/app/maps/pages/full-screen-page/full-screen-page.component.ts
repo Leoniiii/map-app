@@ -8,7 +8,7 @@ import mapboxgl from 'mapbox-gl';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './full-screen-page.component.html',
-  styleUrl: './full-screen-page.component.scss'
+  styleUrl: './full-screen-page.component.scss',
 })
 export class FullScreenPageComponent implements AfterViewInit {
   @ViewChild('map') divMap?: ElementRef
@@ -24,5 +24,6 @@ export class FullScreenPageComponent implements AfterViewInit {
       zoom: 9, // starting zoom
     });
   }
+
 
 }
