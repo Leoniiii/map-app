@@ -1,7 +1,7 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { Map, accessToken } from 'mapbox-gl';
+import { LngLat, Map, accessToken } from 'mapbox-gl';
 
 @Component({
   selector: 'app-zoom-range-page',
@@ -10,9 +10,10 @@ import { Map, accessToken } from 'mapbox-gl';
   templateUrl: './zoom-range-page.component.html',
   styleUrl: './zoom-range-page.component.scss'
 })
-export class ZoomRangePageComponent implements AfterViewInit {
+export class ZoomRangePageComponent implements AfterViewInit, OnDestroy {
   public zoom = 10
   public map?: Map;
+  public currentCenter: LngLat = new LngLat(-82.36201417068084, 23.129821342373006)
 
   @ViewChild('map') divMap?: ElementRef
 
@@ -24,7 +25,7 @@ export class ZoomRangePageComponent implements AfterViewInit {
       container: this.divMap.nativeElement, // container ID
       accessToken: 'pk.eyJ1IjoibGVvbmk2IiwiYSI6ImNscGltcHlqcjAxN3MybXFvMXhyaTFvMWoifQ.DXL_D2ICY3Xk1ElIj2oARQ',
       style: 'mapbox://styles/mapbox/streets-v12', // style URL
-      center: [-74.5, 40], // starting position [lng, lat]
+      center: this.currentCenter, // starting position [lng, lat]
       zoom: this.zoom, // starting zoom
     });
     this.mapListener()
@@ -41,6 +42,11 @@ export class ZoomRangePageComponent implements AfterViewInit {
       if (this.map!.getZoom() < 18) return
       this.map!.zoomTo(18)
     })
+
+    this.map.on('move', () => {
+      this.currentCenter = this.map!.getCenter()
+      console.log(this.currentCenter)
+    })
   }
 
   zoomIn() {
@@ -54,5 +60,9 @@ export class ZoomRangePageComponent implements AfterViewInit {
   zoomChanged(value: string) {
     this.zoom = +value;
     this.map?.zoomTo(this.zoom)
+  }
+
+  ngOnDestroy(): void {
+    this.map?.remove()
   }
 }
